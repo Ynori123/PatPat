@@ -1,0 +1,34 @@
+{
+    "version": 1,
+    "basePath": "resources/sprites/CatPet/",
+
+    "defaults":{
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "fps": 12,
+        "loop": true,
+        "layout": "row"
+    },
+
+    "animations":{
+        "idle":{
+            "path": "idle_anim.png",
+            "frames": 4,
+            "fps": 12,
+            "loop": true
+        },
+        "walk":{
+            "path": "walk_anim.png",
+            "frames": 6,
+            "fps": 12,
+            "loop": true
+        },
+        "click":{
+            "path": "click_anim.png",
+            "frames": 4,
+            "fps": 12,
+            "loop": false
+        }
+
+    }
+}
