@@ -75,3 +75,6 @@ Desktop.ini
 
 # ----- Crash dumps -----
 *.dmp
+
+
+*.gitignore
