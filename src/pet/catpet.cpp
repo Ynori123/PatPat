@@ -31,6 +31,7 @@ void CatPet::init()
     tools::UI::getWindowSize(screenW, screenH);
     posX_ = screenW / 2; // 居中
     posY_ = static_cast<int> (screenH * 0.8f); // 屏幕下方
+    SDL_Log("CatPet::init screen: %dx%d, initial pos: (%d,%d)", screenW, screenH, posX_, posY_);
 
     // Atcually no need, since paths are in json
     // 初始化动画路径
@@ -67,6 +68,13 @@ void CatPet::update(float dt)
 
 void CatPet::render()
 {
+    // 周期性输出渲染信息，便于定位不可见问题
+    static Uint64 lastLogNs = 0;
+    Uint64 now = SDL_GetTicksNS();
+    if(now - lastLogNs > 1'000'000'000ULL){
+        SDL_Log("CatPet::render state=%d pos=(%d,%d) size=%dx%d", (int)currentState_, posX_, posY_, petWidth_, petHeight_);
+        lastLogNs = now;
+    }
     playAnimation(currentState_);
 }
 
@@ -105,18 +113,20 @@ bool CatPet::loadAnimations()
         SDL_Log("CatPet::loadAnimations: Failed to load manifest: %s", err.c_str());
         return false;
     }
+    SDL_Log("CatPet::loadAnimations: manifest loaded. basePath='%s', animations=%zu", mf.basePath.c_str(), mf.animations.size());
 
     bool sizeSet = false;
 
     // then, run through animations in manifest and load their textures
     for(auto &kv : mf.animations){
-        AnimationDesc desc = kv.second;
+        AnimationDescription desc = kv.second;
         normalizeDesc(desc, mf.defaults);
 
         // get full path
-        const std::string fullPath = (mf.basePath.empty() ? desc.path : (mf.basePath + "/" + desc.path));
+    const std::string fullPath = (mf.basePath.empty() ? desc.path : (mf.basePath + desc.path));
 
         // load texture
+        SDL_Log("CatPet::loadAnimations: loading animation '%s' from '%s'", desc.name.c_str(), fullPath.c_str());
         SDL_Texture* tex = loadTexture(renderer_, fullPath);
         if(!tex){
             SDL_Log("CatPet::loadAnimations: Failed to load texture: %s", fullPath.c_str());
@@ -126,7 +136,8 @@ bool CatPet::loadAnimations()
         // extract frames
         float texW = 0, texH = 0; // if cannot get frames, just caculate
         // use SDL_GetTextureSize to get width and height
-        SDL_GetTextureSize(tex, &texW, &texH);
+    SDL_GetTextureSize(tex, &texW, &texH);
+    SDL_Log("CatPet::loadAnimations: texture size for '%s': %.0fx%.0f", desc.name.c_str(), texW, texH);
         if(desc.frames <= 0){
             if(desc.layout == "grid" && desc.rows > 0 && desc.cols > 0){
                 desc.frames = desc.rows * desc.cols;
@@ -161,10 +172,14 @@ bool CatPet::loadAnimations()
 
         // now, store animation in map
         PetState st = mapNameToState(desc.name);
+        SDL_Log("CatPet::loadAnimations: animation '%s' mapped to state=%d, frames=%zu, loop=%d", desc.name.c_str(), (int)st, frames.size(), (int)desc.loop);
         animations_[st] = std::move(anim);
-
-        return !animations_.empty();
     }
+
+    if(animations_.empty()){
+        SDL_Log("CatPet::loadAnimations: no animations loaded.");
+    }
+    return !animations_.empty();
 }
 
 void CatPet::setState(PetState state){

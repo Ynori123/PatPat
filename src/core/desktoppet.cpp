@@ -37,8 +37,11 @@ void DesktopPet::setWidthAndHeight(SDL_Texture* texture, int totalFrames)
         return;
     }
 
-    petWidth_ = textureWidth / totalFrames;
-    petHeight_ = textureHeight;
+    petWidth_ = static_cast<int>(textureWidth / totalFrames);
+    petHeight_ = static_cast<int>(textureHeight);
+
+    SDL_Log("DesktopPet::setWidthAndHeight -> frame size=%dx%d (from texture %.0fx%.0f, totalFrames=%d)",
+            petWidth_, petHeight_, textureWidth, textureHeight, totalFrames);
 
     return;
 }

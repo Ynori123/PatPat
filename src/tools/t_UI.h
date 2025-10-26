@@ -31,7 +31,7 @@ namespace tools{
         // changers
 
         // 改变窗口样式，实现点击穿透
-        void ChangeWindowTransparent(HWND hwnd, bool isInArea, bool transparentState){
+        void ChangeWindowTransparent(HWND hwnd, bool isInArea, bool &transparentState){
             if(!hwnd){
                 SDL_Log("hwnd is null");
                 return;
@@ -45,6 +45,8 @@ namespace tools{
                     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
                     exStyle |= WS_EX_TRANSPARENT;
                     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+                    SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                     transparentState = true;
                     SDL_Log("Win32: Now is transparent, mouse is not in area.");
                     return;
@@ -57,6 +59,8 @@ namespace tools{
                     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
                     exStyle &= ~WS_EX_TRANSPARENT;
                     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+                    SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                     transparentState = false;
                     SDL_Log("Win32: Now is not transparent, mouse is in area.");
                     return;
@@ -66,7 +70,7 @@ namespace tools{
         }
 
         // 整合函数，根据鼠标位置和窗口状态，实现点击穿透
-        void ChangeTransparentState(HWND hwnd, SDL_Point point, SDL_Rect rect, bool transparentState){
+        void ChangeTransparentState(HWND hwnd, SDL_Point point, SDL_Rect rect, bool &transparentState){
             bool isInArea = IsPointInRect(rect, point);
             ChangeWindowTransparent(hwnd, isInArea, transparentState);
 

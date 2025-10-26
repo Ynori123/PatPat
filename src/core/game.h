@@ -9,6 +9,9 @@
 
 // 获取句柄
 #include "SDL3/SDL_system.h"
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #include <string>
 
@@ -57,7 +60,7 @@ private:
     SDL_Renderer* renderer_ = nullptr;
 
     // UI相关
-    glm::vec2 window_size_ = glm::vec2(800, 600);   // 窗口大小，有默认值，实际上不需要
+    glm::ivec2 window_size_ = glm::ivec2(800, 600);   // 窗口大小，使用整型像素尺寸
 
     // 游戏相关
     std::string title_ = "PatPat";   // 游戏标题
@@ -65,6 +68,10 @@ private:
     Uint64 FPS_ = 60;  // 帧率
     Uint64 frame_delay_ = 0; // 帧延时（间隔），即每帧耗时，单位ns
     float dt = 0.0f; // 每帧时间差，单位秒，测试用
+    // FPS统计
+    Uint64 fps_last_report_ns_ = 0; // 上次FPS上报的时间戳（ns）
+    int fps_frame_count_ = 0;       // 统计周期内的帧计数
+    float fps_last_value_ = 0.0f;   // 最近一次计算得到的FPS
 
     // 桌宠相关
     CatPet* pet_ = nullptr; // 桌宠指针

@@ -13,6 +13,12 @@ struct AnimationFrame {
     int duration;   // 当前帧的持续时间，毫秒
 };
 
+// 可选：用于从 JSON 指定的矩形构建帧
+struct AnimFrameRect {
+    int x = 0, y = 0, w = 0, h = 0;
+    int durationMS = 100; // ms
+};
+
 
 class Animation{
 public:
@@ -51,13 +57,14 @@ private:
 struct AnimationDescription {
     std::string name; // 动画名称
     std::string path; // 资源路径(相对路径)
+    int frames{-1};    // 帧数量（可选，<=0 表示自动计算）
     int frameWidth{-1};  // 帧宽度
     int frameHeight{-1}; // 帧高度
     int rows{-1}, cols{-1}; // 行数和列数
     int fps{-1};         // 每秒帧数
     bool loop{true};       // 是否循环
     std::string layout; // 布局方式 "row" 或 "column"
-    // std::vetor<FrameRect> frames; // 可选，手动指定每帧的源矩形
+    std::vector<AnimFrameRect> rects; // 可选，手动指定每帧的源矩形
 };
 
 struct Defaults {

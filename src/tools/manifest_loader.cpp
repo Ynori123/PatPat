@@ -66,9 +66,10 @@ bool loadManifest(const std::string& jsonPath, Manifest& out, std::string* outEr
             const minijson::Value& val = kv.second;
             if(!val.isObject()) continue;
 
-            AnimationDesc desc;
+            AnimationDescription desc;
             desc.name = name;
             desc.path = val.getString("path", "");
+            // 可选字段：frames
             desc.frames = val.getInt("frames", -1);
             desc.frameWidth = val.getInt("frameWidth", -1);
             desc.frameHeight = val.getInt("frameHeight", -1);
@@ -82,7 +83,7 @@ bool loadManifest(const std::string& jsonPath, Manifest& out, std::string* outEr
             if(auto rects = val.getArray("rects")){
                 for(const auto& item : *rects){
                     if(!item.isObject()) continue;
-                    FrameRect fr;
+                    AnimFrameRect fr;
                     fr.x = item.getInt("x", 0);
                     fr.y = item.getInt("y", 0);
                     fr.w = item.getInt("w", 0);
@@ -99,7 +100,7 @@ bool loadManifest(const std::string& jsonPath, Manifest& out, std::string* outEr
     return !out.animations.empty();
 }
 
-void NormalizeDesc(AnimationDesc& d, const Defaults& def){
+void normalizeDesc(AnimationDescription& d, const Defaults& def){
     if(d.fps <= 0) d.fps = def.fps;
     if(d.frameWidth <= 0) d.frameWidth = def.frameWidth;
     if(d.frameHeight <= 0) d.frameHeight = def.frameHeight;
@@ -107,7 +108,7 @@ void NormalizeDesc(AnimationDesc& d, const Defaults& def){
     // loop default to true
 }
 
-std::vector<AnimationFrame> buildFramesFromRects(const AnimationDesc& d){
+std::vector<AnimationFrame> buildFramesFromRects(const AnimationDescription& d){
     std::vector<AnimationFrame> frames;
     frames.reserve(d.rects.size());
     int per = 1000 / (d.fps > 0 ? d.fps : 8);
@@ -120,9 +121,9 @@ std::vector<AnimationFrame> buildFramesFromRects(const AnimationDesc& d){
     return frames;
 }
 
-std::vector<AnimationFrame> buildFramesFromGrid(const AnimationDesc& d, int texW, int texH){
+std::vector<AnimationFrame> buildFramesFromGrid(const AnimationDescription& d, int texW, int texH){
     std::vector<AnimationFrame> frames;
-    if(d.frameWidth <= 0 || d.frameWidth <= 0) return frames;
+    if(d.frameWidth <= 0 || d.frameHeight <= 0) return frames;
 
     int per = 1000 / (d.fps > 0 ? d.fps : 8);
     int count = d.frames;
@@ -164,6 +165,12 @@ SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& fullpath){
     SDL_Texture* t = IMG_LoadTexture(renderer, fullpath.c_str());
     if(!t){
         SDL_Log("Failed to load texture: %s, error: %s", fullpath.c_str(), SDL_GetError());
+    }
+    else{
+        // 透明贴图需要混合
+        SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+        float w=0, h=0; SDL_GetTextureSize(t, &w, &h);
+        SDL_Log("Texture loaded: %s (%.0fx%.0f), blend=BLEND", fullpath.c_str(), w, h);
     }
     return t;
 }

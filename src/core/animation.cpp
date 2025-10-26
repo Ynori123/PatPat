@@ -1,4 +1,6 @@
 #include "animation.h"
+#include "../tools/manifest_loader.h"
+#include <iostream>
 
 Animation::Animation()
 {
@@ -117,8 +119,43 @@ void Animation::clean(){
 // --------------------------------------------------------------
 // functions for AnimationDescription
 
-Manifest loadManifestFromFile(const std::string& filepath){
-    SDL_Texture* tex
+Manifest loadManifestFromFile(const std::string& filepath, SDL_Renderer* renderer) {
+    Manifest manifest;
+    std::string error;
+
+    // Step 1: Load the manifest JSON file
+    if (!loadManifest(filepath, manifest, &error)) {
+        std::cerr << "Failed to load manifest: " << error << std::endl;
+        return manifest;
+    }
+
+    // Step 2: Normalize animation descriptions
+    for (auto& [name, desc] : manifest.animations) {
+        normalizeDesc(desc, manifest.defaults);
+
+        // Step 3: Load texture for the animation
+        std::string fullPath = manifest.basePath + desc.path;
+        SDL_Texture* texture = loadTexture(renderer, fullPath);
+        if (!texture) {
+            std::cerr << "Failed to load texture: " << fullPath << std::endl;
+            continue;
+        }
+
+        // Step 4: Build animation frames
+        std::vector<AnimationFrame> frames;
+        if (!desc.rects.empty()) {
+            frames = buildFramesFromRects(desc);
+        } else {
+            float texW, texH;
+            SDL_GetTextureSize(texture, &texW, &texH);
+            frames = buildFramesFromGrid(desc, texW, texH);
+        }
+
+        // Debug: Print loaded animation info
+        std::cout << "Loaded animation: " << name << " with " << frames.size() << " frames." << std::endl;
+    }
+
+    return manifest;
 }
 
 // Set defaults for any missing fields in AnimationDescription
@@ -128,6 +165,7 @@ bool normalizeWithDefaults(AnimationDescription& d, const Defaults& defaults){
     if(d.frameHeight <= 0) d.frameHeight = defaults.frameHeight;
     if(d.layout != "row" && d.layout != "column") d.layout = defaults.layout;
     // no need to set loop since it has a default value
+    return true;
 }
 
 /* 

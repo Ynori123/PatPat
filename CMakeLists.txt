@@ -1,6 +1,6 @@
 # 标题
 cmake_minimum_required(VERSION 3.10.0)
-project(PatPat VERSION 0.1.0 LANGUAGES C CXX)
+project(Pet VERSION 0.1.0 LANGUAGES C CXX)
 
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
@@ -8,9 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 设置编译选项
 if (MSVC)
-    add_compile_options(/W4)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(/W4 /utf-8)
 endif()
 
 # 设置编译输出目录
@@ -26,8 +24,9 @@ find_package(SDL3_mixer REQUIRED)
 find_package(SDL3_ttf REQUIRED)
 find_package(glm REQUIRED)
 
+
 # 显示添加头文件包含路径
-include_directories(${CMAKE_SOURCE_DIR}/src/tools)
+# include_directories(${CMAKE_SOURCE_DIR}/src/tools)
 
 # 添加可执行文件
 add_executable(${TARGET}
@@ -38,7 +37,12 @@ add_executable(${TARGET}
                 src/pet/catpet.cpp
                 src/tools/manifest_loader.cpp
                 src/tools/minijson.cpp
-                src/tools/hittest.cpp)
+                src/tools/hittest.cpp
+                src/tools/tools.cpp)
+
+# 添加头文件搜索路径
+# 使得 core/desktoppet.h 等路径可被正确解析
+target_include_directories(${TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # 链接库
 target_link_libraries(${TARGET}
@@ -48,3 +52,4 @@ target_link_libraries(${TARGET}
                         SDL3_ttf::SDL3_ttf
                         glm::glm
                         )
+
