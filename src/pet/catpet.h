@@ -19,6 +19,9 @@ protected:
     virtual void setState(PetState state) override; // 设置状态
     virtual void handleEventClick(SDL_Event& event) override; // 处理点击事件
 
+    // Timer
+    
+
 };
 
 #endif // CATPET_H

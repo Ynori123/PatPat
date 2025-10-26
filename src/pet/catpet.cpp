@@ -55,6 +55,12 @@ void CatPet::update(float dt)
     auto it = animations_.find(currentState_);
     if(it != animations_.end() && it->second){
         it->second->update(dt);
+        // Just used simple method here
+        // Actually need better state machine
+        // while animation is finished and not looping, switch back to IDLE
+        if(!it->second->isLooping() && it->second->isFinished()){
+            setState(PetState::IDLE);
+        }
     } else{
         // 没有当前状态动画
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "No animation found for current state in CatPet::update");

@@ -43,6 +43,8 @@ public:
 
     // Getters
     int getFrameCount() const;
+    bool isFinished() const { return isFinished_; }
+    bool isLooping() const { return isLooping_; }
 
 private:
     SDL_Texture* texture_; // 动画纹理
