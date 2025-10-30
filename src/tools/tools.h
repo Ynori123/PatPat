@@ -20,8 +20,8 @@ namespace tools{
         SDL_Point getClientMousePosition(HWND hwnd);
 
         // changers, which is real workers
-    void ChangeWindowTransparent(HWND hwnd, bool isInArea, bool &transparentState);
-    void ChangeTransparentState(HWND hwnd, SDL_Point point, SDL_Rect rect, bool &transparentState);  // 功能整合函数
+        void ChangeWindowTransparent(HWND hwnd, bool isInArea, bool &transparentState);
+        void ChangeTransparentState(HWND hwnd, SDL_Point point, SDL_Rect rect, bool &transparentState);  // 功能整合函数
 
         // Isfunctions, which is used for checking states
         bool IsPointInRect(SDL_Rect rect, SDL_Point point);

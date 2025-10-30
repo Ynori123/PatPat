@@ -57,6 +57,9 @@ bool loadManifest(const std::string& jsonPath, Manifest& out, std::string* outEr
         if(auto v = d->find("layout"); v != d->end() && v->second.isString()) {
             out.defaults.layout = v->second.s;
         }
+        if(auto v = d->find("is_movement"); v != d->end()){
+            out.defaults.is_movement = v->second.b;
+        }
     }
 
     // animations
@@ -78,6 +81,7 @@ bool loadManifest(const std::string& jsonPath, Manifest& out, std::string* outEr
             desc.fps = val.getInt("fps", -1);
             desc.loop = val.getBool("loop", true);
             desc.layout = val.getString("layout", "row");
+            desc.is_movement = val.getBool("is_movement", false);
         
 
             if(auto rects = val.getArray("rects")){
@@ -105,6 +109,7 @@ void normalizeDesc(AnimationDescription& d, const Defaults& def){
     if(d.frameWidth <= 0) d.frameWidth = def.frameWidth;
     if(d.frameHeight <= 0) d.frameHeight = def.frameHeight;
     if(d.layout.empty()) d.layout = def.layout;
+    if(d.is_movement == false) d.is_movement = def.is_movement;
     // loop default to true
 }
 

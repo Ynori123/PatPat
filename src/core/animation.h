@@ -67,6 +67,7 @@ struct AnimationDescription {
     bool loop{true};       // 是否循环
     std::string layout; // 布局方式 "row" 或 "column"
     std::vector<AnimFrameRect> rects; // 可选，手动指定每帧的源矩形
+    bool is_movement{false}; // 是否为移动动画
 };
 
 struct Defaults {
@@ -75,6 +76,7 @@ struct Defaults {
     int fps{8};         // 默认每秒帧数
     bool loop{true};       // 默认循环
     std::string layout{"row"}; // 默认布局方式
+    bool is_movement{false}; // 默认是否为移动动画
 };
 struct Manifest {
     int version{1}; // 版本号

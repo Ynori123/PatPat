@@ -38,7 +38,9 @@ add_executable(${TARGET}
                 src/tools/manifest_loader.cpp
                 src/tools/minijson.cpp
                 src/tools/hittest.cpp
-                src/tools/tools.cpp)
+                src/tools/tools.cpp
+                src/tools/Timer.cpp
+                )
 
 # 添加头文件搜索路径
 # 使得 core/desktoppet.h 等路径可被正确解析

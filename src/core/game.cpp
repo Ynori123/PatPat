@@ -47,12 +47,12 @@ void Game::init()
     }
 
     // 启动与构建信息
-#ifdef NDEBUG
-    SDL_Log("Build: Release");
-#else
-    SDL_Log("Build: Debug");
-#endif
-    SDL_Log("Target FPS: %llu", static_cast<unsigned long long>(FPS_));
+// #ifdef NDEBUG
+//     SDL_Log("Build: Release");
+// #else
+//     SDL_Log("Build: Debug");
+// #endif
+//     SDL_Log("Target FPS: %llu", static_cast<unsigned long long>(FPS_));
 
     // 透明窗口与混合设置
     SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);

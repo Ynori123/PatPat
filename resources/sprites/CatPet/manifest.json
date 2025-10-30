@@ -7,7 +7,8 @@
         "frameHeight": 48,
         "fps": 12,
         "loop": true,
-        "layout": "row"
+        "layout": "row",
+        "is_movement": false
     },
 
     "animations":{
@@ -15,19 +16,22 @@
             "path": "idle_anim.png",
             "frames": 4,
             "fps": 12,
-            "loop": true
+            "loop": true,
+            "is_movement": false
         },
         "walk":{
             "path": "walk_anim.png",
             "frames": 6,
             "fps": 12,
-            "loop": true
+            "loop": true,
+            "is_movement": true
         },
         "click":{
             "path": "click_anim.png",
             "frames": 4,
             "fps": 12,
-            "loop": false
+            "loop": false,
+            "is_movement": false
         }
 
     }

@@ -108,3 +108,9 @@ std::vector<AnimationFrame> DesktopPet::getFrames(std::string &spritePath, int f
 
     return frames;
 }
+
+bool DesktopPet::getMovementState() const{
+    auto it = movementStates_.find(currentState_);
+    return ((it != movementStates_.end() ? it->second : false));
+}
+
